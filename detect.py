@@ -4,7 +4,7 @@ import datetime
 import time
 
 # Webカメラを使う
-cap=cv2.VideoCapture("./img/sample2.mp4") #一旦動画に
+cap=cv2.VideoCapture(0) #一旦動画に
 before=None
 count=1
 fps = int(cap.get(cv2.CAP_PROP_FPS)) #動画のFPSを取得
@@ -38,19 +38,22 @@ while True: #1フレームごと
     # 差分があった点
     for target in contours :
         x, y, w, h = cv2.boundingRect(target)
-        if w < 40:
+        if w < 80:
             continue 
 
         areaframe = cv2.rectangle(frame, (x, y), (x+w, y+h), (0,255,0), 2) #緑枠で囲む
         aa=1
+        
+
+
+    if aa==1:
         if count == 90: #fpsでカウントする 3s=90frame (30fps camera)
             cv2.imwrite("sample.jpg",areaframe)
             print("detected")
             count == 0 #reset
-
-
-    if aa==1:
-        count = count + 1 #1frameごとにカウント？
+            break
+        else:
+             count = count + 1 #1frameごとにカウント？
     
 
     if cv2.waitKey(1) == 13:break
