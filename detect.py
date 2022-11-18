@@ -2,12 +2,18 @@
 import cv2
 import datetime
 import time
+import zipfile
+import requests
 
 # Webカメラを使う
 cap=cv2.VideoCapture(0) #一旦動画に
 before=None
 count=1
 fps = int(cap.get(cv2.CAP_PROP_FPS)) #動画のFPSを取得
+url="https://os3-380-23410.vs.sakura.ne.jp/api/v1/records"
+data={''}
+
+
 
 print("動体検知を開始")
 print(str(datetime.datetime.now())) #時刻
@@ -38,7 +44,7 @@ while True: #1フレームごと
     # 差分があった点
     for target in contours :
         x, y, w, h = cv2.boundingRect(target)
-        if w < 80:
+        if w < 120:
             continue 
 
         areaframe = cv2.rectangle(frame, (x, y), (x+w, y+h), (0,255,0), 2) #緑枠で囲む
@@ -48,9 +54,22 @@ while True: #1フレームごと
 
     if aa==1:
         if count == 90: #fpsでカウントする 3s=90frame (30fps camera)
-            cv2.imwrite("sample.jpg",areaframe)
+            zip=zipfile.ZipFile("file/sample.zip","w") #make zip
+
+            #str_dt=str(datetime.datetime.now())    #本番用
+            #cv2.imwrite("img/"+str_dt+".jpg",areaframe)
+            #zip.write("img/"+str_dt+".jpg",compress_type=zipfile.ZIP_DEFLATED) #add zip
+
+            cv2.imwrite("img/sample2.jpg",areaframe)
+            zip.write("img/sample2.jpg",compress_type=zipfile.ZIP_DEFLATED) #add zip
+            file={
+                'file1':open ("img/sample2.jpg","rb")
+            } #send file
+            res = requests.post(url,files=file)
+            print(res)
             print("detected")
             count == 0 #reset
+            zip.close()
             break
         else:
              count = count + 1 #1frameごとにカウント？
