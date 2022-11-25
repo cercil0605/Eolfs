@@ -63,7 +63,7 @@ while True: #1フレームごと
             cv2.imwrite("img/sample2.jpg",areaframe)
             zip.write("img/sample2.jpg",compress_type=zipfile.ZIP_DEFLATED) #add zip
             file={
-                'file1':open ("img/sample2.jpg","rb")
+                'file1':open ("file/sample.zip","rb")
             } #send file
             res = requests.post(url,files=file)
             print(res)
