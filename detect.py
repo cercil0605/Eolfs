@@ -15,7 +15,7 @@ data={''}
 
 
 
-print("動体検知を開始")
+print("Begin Human Detect")
 print(str(datetime.datetime.now())) #時刻
 
 while True: #1フレームごと
@@ -24,7 +24,7 @@ while True: #1フレームごと
     if ret == False:
         break
 
-    # 白黒画像に変換
+    # grayscale
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
     if before is None:
@@ -41,10 +41,10 @@ while True: #1フレームごと
     # 輪郭のデータを取得
     contours = cv2.findContours(thresh,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)[0]
 
-    # 差分があった点
+    # 差分
     for target in contours :
         x, y, w, h = cv2.boundingRect(target)
-        if w < 120:
+        if w < 120: #width 120 over? detect
             continue 
 
         areaframe = cv2.rectangle(frame, (x, y), (x+w, y+h), (0,255,0), 2) #緑枠で囲む
@@ -75,12 +75,9 @@ while True: #1フレームごと
              count = count + 1 #1frameごとにカウント？
     
 
-    if cv2.waitKey(1) == 13:break
+    if cv2.waitKey(1) == 13:break #press enter 
 
 
 
-print("動体検知を終了します")
+print("End")
 print(str(datetime.datetime.now()))
-
-# ウィンドウの破棄
-#cv2.destroyAllWindows()
