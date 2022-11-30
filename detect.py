@@ -12,6 +12,10 @@ count=1
 fps = int(cap.get(cv2.CAP_PROP_FPS)) #動画のFPSを取得
 url="https://os3-380-23410.vs.sakura.ne.jp/api/v1/records"
 data={''}
+size=(1280,720) #画面サイズ
+#録画
+fourcc=cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
+video=cv2.VideoWriter("img/output.mp4",fourcc,fps,size)
 
 
 
@@ -53,15 +57,18 @@ while True: #1フレームごと
 
 
     if aa==1:
+        video.write(frame) #video capture begin
+
         if count == 90: #fpsでカウントする 3s=90frame (30fps camera)
             zip=zipfile.ZipFile("file/sample.zip","w") #make zip
-
             #str_dt=str(datetime.datetime.now())    #本番用
             #cv2.imwrite("img/"+str_dt+".jpg",areaframe)
             #zip.write("img/"+str_dt+".jpg",compress_type=zipfile.ZIP_DEFLATED) #add zip
 
-            cv2.imwrite("img/sample2.jpg",areaframe)
-            zip.write("img/sample2.jpg",compress_type=zipfile.ZIP_DEFLATED) #add zip
+            #cv2.imwrite("img/sample2.jpg",areaframe)
+            zip.write("img/sample.mp4",compress_type=zipfile.ZIP_DEFLATED) #add zip
+
+
             file={
                 'file1':open ("file/sample.zip","rb")
             } #send file
@@ -69,7 +76,10 @@ while True: #1フレームごと
             print(res)
             print("detected")
             count == 0 #reset
+            video.release()
             zip.close()
+
+
             break
         else:
              count = count + 1 #1frameごとにカウント？
@@ -79,5 +89,5 @@ while True: #1フレームごと
 
 
 
-print("End")
+print("End Human Detect")
 print(str(datetime.datetime.now()))
