@@ -67,11 +67,7 @@ while True: #1フレームごと
 
         if count==90: #fpsでカウントする 3s=90frame (30fps camera)
             zip=zipfile.ZipFile("file/"+str_dt+".zip","w") #make zip
-            video.release()
-            #cv2.imwrite("img/"+str_dt+".jpg",areaframe)
-            #zip.write("img/"+str_dt+".jpg",compress_type=zipfile.ZIP_DEFLATED) #add zip
-
-            #cv2.imwrite("img/sample2.jpg",areaframe)
+            video.release() #save video
             zip.write("img/"+str_dt+".mp4",compress_type=zipfile.ZIP_DEFLATED) #add zip
             zip.close()
 
@@ -80,12 +76,10 @@ while True: #1フレームごと
             } #send file
             res = requests.post(url,files=file)
             print(res)
+
             print("detected")
+            time.sleep(10) #sleep 10sec ここが怪しい10s待ててる？
             count == 0 #reset
-            
-
-
-            break
         else:
              count = count + 1 #1frameごとにカウント？
     
