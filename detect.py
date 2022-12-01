@@ -13,9 +13,10 @@ fps = int(cap.get(cv2.CAP_PROP_FPS)) #動画のFPSを取得
 url="https://os3-380-23410.vs.sakura.ne.jp/api/v1/records"
 data={''}
 size=(640,480) #画面サイズ
+flaging=1
 #録画
 fourcc=cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
-video=cv2.VideoWriter("img/sample.mp4",fourcc,fps,size)
+#video=cv2.VideoWriter("img/sample.mp4",fourcc,fps,size)
 
 
 print("Begin Human Detect")
@@ -56,11 +57,15 @@ while True: #1フレームごと
 
 
     if aa==1:
+        
+        if flaging==1:
+            str_dt=str(datetime.datetime.now()).replace(" ","_").replace(":", "-")
+            video=cv2.VideoWriter("img/"+str_dt+".mp4",fourcc,fps,size)
+            flaging=0
+
         video.write(frame) #video capture begin
 
-        if count == 90: #fpsでカウントする 3s=90frame (30fps camera)
-            str_dt=str(datetime.datetime.now()).replace(" ","_")
-            video=cv2.VideoWriter("img/"+str_dt+".mp4",fourcc,fps,size)
+        if count==90: #fpsでカウントする 3s=90frame (30fps camera)
             zip=zipfile.ZipFile("file/"+str_dt+".zip","w") #make zip
             video.release()
             #cv2.imwrite("img/"+str_dt+".jpg",areaframe)
