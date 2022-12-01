@@ -15,8 +15,7 @@ data={''}
 size=(640,480) #画面サイズ
 #録画
 fourcc=cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
-video=cv2.VideoWriter("img/output.mp4",fourcc,fps,size)
-
+video=cv2.VideoWriter("img/sample.mp4",fourcc,fps,size)
 
 
 print("Begin Human Detect")
@@ -60,18 +59,19 @@ while True: #1フレームごと
         video.write(frame) #video capture begin
 
         if count == 90: #fpsでカウントする 3s=90frame (30fps camera)
-            zip=zipfile.ZipFile("file/sample.zip","w") #make zip
+            str_dt=str(datetime.datetime.now()).replace(" ","_")
+            video=cv2.VideoWriter("img/"+str_dt+".mp4",fourcc,fps,size)
+            zip=zipfile.ZipFile("file/"+str_dt+".zip","w") #make zip
             video.release()
-            #str_dt=str(datetime.datetime.now())    #本番用
             #cv2.imwrite("img/"+str_dt+".jpg",areaframe)
             #zip.write("img/"+str_dt+".jpg",compress_type=zipfile.ZIP_DEFLATED) #add zip
 
             #cv2.imwrite("img/sample2.jpg",areaframe)
-            zip.write("img/output.mp4",compress_type=zipfile.ZIP_DEFLATED) #add zip
+            zip.write("img/"+str_dt+".mp4",compress_type=zipfile.ZIP_DEFLATED) #add zip
             zip.close()
 
             file={
-                'file1':open ("file/sample.zip","rb")
+                'file1':open ("file/"+str_dt+".zip","rb")
             } #send file
             res = requests.post(url,files=file)
             print(res)
