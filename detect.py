@@ -48,7 +48,7 @@ while True: #1フレームごと
     # 差分
     for target in contours :
         x, y, w, h = cv2.boundingRect(target)
-        if w < 120: #width 120 over? detect
+        if w < 120: #感度調整を現場で行う
             continue 
 
         areaframe = cv2.rectangle(frame, (x, y), (x+w, y+h), (0,255,0), 2) #緑枠で囲む
