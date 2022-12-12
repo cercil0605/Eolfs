@@ -4,6 +4,7 @@ import datetime
 import time
 import zipfile
 import requests
+import bluepy
 
 # Webカメラを使う
 cap=cv2.VideoCapture(0) #一旦動画に
@@ -16,7 +17,20 @@ size=(640,480) #画面サイズ
 flaging=1
 #録画
 fourcc=cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
-#video=cv2.VideoWriter("img/sample.mp4",fourcc,fps,size)
+#detect bluetooth
+scanner=bluepy.btle.Scanner(0)
+devices=scanner.scan(3)
+
+def scan_func(devices_n,filename): #scan devices func (not tested)
+    f=open("text/"+str(filename)+".txt","a") #begin file write 上書きmode
+    f.write("======================================================\n")
+    f.write("time"+"                       "+"address\n") #時間 アドレス 必要であればRSSI（電波強度）
+
+    for device in devices_n: #3s検知開始
+    str_dt=str(datetime.datetime.now()).replace(" ","_").replace(":", "-")
+    f.write("{} {}\n".format(str_dt,str(device.addr)))
+    f.close()
+
 
 
 print("Begin Human Detect")
@@ -50,7 +64,6 @@ while True: #1フレームごと
         x, y, w, h = cv2.boundingRect(target)
         if w < 120: #感度調整を現場で行う
             continue 
-
         areaframe = cv2.rectangle(frame, (x, y), (x+w, y+h), (0,255,0), 2) #緑枠で囲む
         aa=1
         
@@ -60,6 +73,7 @@ while True: #1フレームごと
         
         if flaging==1:
             str_dt=str(datetime.datetime.now()).replace(" ","_").replace(":", "-")
+            scan_func(devices,str_dt) #ここで導入してみる
             video=cv2.VideoWriter("img/"+str_dt+".mp4",fourcc,fps,size)
             flaging=0
 
@@ -68,7 +82,8 @@ while True: #1フレームごと
         if count==90: #fpsでカウントする 3s=90frame (30fps camera)
             zip=zipfile.ZipFile("file/"+str_dt+".zip","w") #make zip
             video.release() #save video
-            zip.write("img/"+str_dt+".mp4",compress_type=zipfile.ZIP_DEFLATED) #add zip
+            zip.write("img/"+str_dt+".mp4",compress_type=zipfile.ZIP_DEFLATED) #add mp4 to zip
+            zip.write("text/"+str_dt+".txt",compress_type=zipfile.ZIP_DEFLATED) #add text to zip
             zip.close()
 
             file={
