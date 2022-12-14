@@ -5,9 +5,19 @@ import time
 import zipfile
 import requests
 import bluepy
+def scan_func(devices_n,filename): #scan devices func (not tested)
+    f=open("text/"+str(filename)+".txt","w") #begin file write 上書きmode
+    f.write("======================================================\n")
+    f.write("time"+"                       "+"address\n") #時間 アドレス 必要であればRSSI（電波強度）
+
+    for device in devices_n: #3s検知開始
+        str_dt=str(datetime.datetime.now()).replace(" ","_").replace(":", "-")
+        f.write("{} {}\n".format(str_dt,str(device.addr)))
+    
+    f.close()
 
 # Webカメラを使う
-cap=cv2.VideoCapture(0) #一旦動画に
+cap = cv2.VideoCapture(-1) #一旦動画に
 before=None
 count=1
 fps = int(cap.get(cv2.CAP_PROP_FPS)) #動画のFPSを取得
@@ -21,23 +31,15 @@ fourcc=cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
 scanner=bluepy.btle.Scanner(0)
 devices=scanner.scan(3)
 
-def scan_func(devices_n,filename): #scan devices func (not tested)
-    f=open("text/"+str(filename)+".txt","a") #begin file write 上書きmode
-    f.write("======================================================\n")
-    f.write("time"+"                       "+"address\n") #時間 アドレス 必要であればRSSI（電波強度）
-
-    for device in devices_n: #3s検知開始
-    str_dt=str(datetime.datetime.now()).replace(" ","_").replace(":", "-")
-    f.write("{} {}\n".format(str_dt,str(device.addr)))
-    f.close()
-
-
 
 print("Begin Human Detect")
 print(str(datetime.datetime.now())) #時刻
 
-while True: #1フレームごと
+while (True): #1フレームごと
     ret, frame = cap.read()
+    #print(type(cap))
+    # <class 'cv2.VideoCapture'>
+    #print(cap.isOpened())
     aa=0
     if ret == False:
         break
@@ -93,13 +95,14 @@ while True: #1フレームごと
             print(res)
 
             print("detected")
-            time.sleep(10) #sleep 10sec ここが怪しい10s待ててる？
+            #time.sleep(10) #sleep 10sec ここが怪しい10s待ててる？
             count == 0 #reset
+            break  #一旦抜ける
         else:
              count = count + 1 #1frameごとにカウント？
     
 
-    if cv2.waitKey(1) == 13:break #press enter 
+    #if cv2.waitKey(1) == 13:break #press enter 
 
 
 
