@@ -14,7 +14,9 @@ def scan_func(devices_n,filename): #scan devices func (not tested)
         str_dt=str(datetime.datetime.now()).replace(" ","_").replace(":", "-")
         f.write("{} {}\n".format(str_dt,str(device.addr)))
     
+    f.write("======================================================")
     f.close()
+    
 
 # Webカメラを使う
 cap = cv2.VideoCapture(-1) #一旦動画に
@@ -64,7 +66,7 @@ while (True): #1フレームごと
     # 差分
     for target in contours :
         x, y, w, h = cv2.boundingRect(target)
-        if w < 120: #感度調整を現場で行う
+        if w < 120 and h < 120 : #感度調整を現場で行う w　横　h 高さ
             continue 
         areaframe = cv2.rectangle(frame, (x, y), (x+w, y+h), (0,255,0), 2) #緑枠で囲む
         aa=1
