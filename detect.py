@@ -5,6 +5,8 @@ import time
 import zipfile
 import requests
 import bluepy
+
+
 def scan_func(devices_n,filename): #scan devices func (not tested)
     f=open("text/"+str(filename)+".txt","w") #begin file write 上書きmode
     f.write("======================================================\n")
@@ -32,7 +34,6 @@ fourcc=cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
 #detect bluetooth
 scanner=bluepy.btle.Scanner(0)
 devices=scanner.scan(3)
-
 
 print("Begin Human Detect")
 print(str(datetime.datetime.now())) #時刻
@@ -66,12 +67,10 @@ while (True): #1フレームごと
     # 差分
     for target in contours :
         x, y, w, h = cv2.boundingRect(target)
-        if w < 120 and h < 120 : #感度調整を現場で行う w　横　h 高さ
-            continue 
-        areaframe = cv2.rectangle(frame, (x, y), (x+w, y+h), (0,255,0), 2) #緑枠で囲む
-        aa=1
-        
-
+        if  h > 120 : #感度調整を現場で行う w　横　h 高さ
+            areaframe = cv2.rectangle(frame, (x, y), (x+w, y+h), (0,255,0), 2) #緑枠で囲む
+            aa=1
+    
 
     if aa==1:
         
@@ -102,7 +101,8 @@ while (True): #1フレームごと
             break  #一旦抜ける
         else:
              count = count + 1 #1frameごとにカウント？
-    
+             
+    time.sleep(1/30)
 
     #if cv2.waitKey(1) == 13:break #press enter 
 
