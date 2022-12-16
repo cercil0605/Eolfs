@@ -38,21 +38,33 @@ devices=scanner.scan(3)
 print("Begin Human Detect")
 print(str(datetime.datetime.now())) #時刻
 
-while (True): #1フレームごと
+def job (): #1フレームごと
+    
+    # 変数定義
+    global cap
+    global before
+    global count
+    global fps #動画のFPSを取得
+    global url
+    global data
+    global size #画面サイズ
+    global flaging
+    global video
+    global str_dt
+    
+    #print("tintin")
+    
     ret, frame = cap.read()
-    #print(type(cap))
-    # <class 'cv2.VideoCapture'>
-    #print(cap.isOpened())
     aa=0
-    if ret == False:
-        break
+    if ret == False: 
+        return False
 
     # grayscale
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
     if before is None:
         before = gray.astype("float")
-        continue
+        return True
 
     # 現在のフレームと移動平均との差を計算
     cv2.accumulateWeighted(gray, before, 0.5)
@@ -95,18 +107,24 @@ while (True): #1フレームごと
             res = requests.post(url,files=file)
             print(res)
 
-            print("detected")
-            #time.sleep(10) #sleep 10sec ここが怪しい10s待ててる？
-            count == 0 #reset
-            break  #一旦抜ける
+            print("detected\n")
+            count = 0 #reset
+            flaging = 1
+            #break  #一旦抜ける
+            time.sleep(10)
+            #print("PrintDone\n")
         else:
-             count = count + 1 #1frameごとにカウント？
+            count = count + 1 #1frameごとにカウント？
+            
              
     time.sleep(1/30)
 
-    #if cv2.waitKey(1) == 13:break #press enter 
+    #if cv2.waitKey(1) == 13 : break #press enter 
+    return True
 
-
+job_state = True
+while job_state :
+    job_state = job()
 
 print("End Human Detect")
 print(str(datetime.datetime.now()))
